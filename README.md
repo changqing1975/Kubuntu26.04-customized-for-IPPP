@@ -23,10 +23,10 @@ apt install build-essential #gcc15.2
 apt install bridge-utils uml-utilities
 apt install wireshark
 ```
-将ippp.lua拷贝至plugins目录(help >> about wireshark >> folders >> global lua plugins  xxx/4.6/)。
+将[ippp.lua](https://github.com/changqing1975/Wireshark-extension-for-IPPP/blob/main/ippp.lua)拷贝至plugins目录(help >> about wireshark >> folders >> global lua plugins  xxx/4.6/)。
 ## 配置网络
 将虚拟机设置>>网络>>连接方式 设置为桥接网卡
-为方便使用，用手动方式配置固定IP地址，将文件01-network-manager-all.yaml拷贝至/etc/netplan。
+为方便使用，用手动方式配置固定IP地址，将文件[01-network-manager-all.yaml]()拷贝至/etc/netplan。
 
 ## 配置免密登录
 客户端（windows）中执行
@@ -73,13 +73,12 @@ sudo apt install global
 echo "/home/ippp/ippp/ippp_stack_linux" > dirs_to_index.txt
 echo "/home/ippp/ippp/kernel" >> dirs_to_index.txt
 gtags --recursive -f /home/ippp/ippp/dirs_to_index.txt
-备份至ova
-管理>>导出虚拟电脑
-（MAC地址设定：包含所有网卡的MAC地址）
-kubuntu26.04_2由此生成
+
+## 至此生成了一个支持IP++开发与调试的linux系统，可直接下载[镜像](https://share.weiyun.com/SUACzzRC)使用。
 
 ## 安装内核
 
+安装定制版内核的方法，可参阅项目[Linux-kernel-for-IPPP-protocol-stack](https://github.com/changqing1975/Linux-kernel-for-IPPP-protocol-stack)。
 
 ## 安装GDB
 在/home/ippp/ippp下创建目录GDB
@@ -153,17 +152,21 @@ b do_init_module
 ## Buildroot生成根文件系统
 
 ### 安装依赖
+
 `apt install -y libcrypt-dev`
 
 ### 下载并解压
+
 在/home/ippp/ippp下创建目录buildroot，去buildroot.org下载安装包。
 
 `tar -zxvf buildroot-xxx`
+
 `cd buildroot-xxx`
 
 ### 配置
 
 `make qemu_x86_64_defconfig`
+
 `make menuconfig`
 
 ```
@@ -198,10 +201,13 @@ Filesystem images  --->
 ```
 
 ### 编译
+
 `make`
+
 编译完成后的目标文件存放在 output/images/目录下。
 
 ## 安装qemu
+
 使用以下命令安装：
 
 `apt install qemu-system-x86 libc6-dev-i386 -y`
@@ -240,3 +246,4 @@ qemu-system-x86_64 \
 
 加入到etc/init.d/rcS的最后一行。
 
+## 至此生成了一个支持IP++开发与调试的linux系统，可直接下载[镜像](https://share.weiyun.com/XzZ7NRTK)使用。
