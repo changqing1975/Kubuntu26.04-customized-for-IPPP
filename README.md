@@ -83,7 +83,7 @@ kubuntu26.04_2由此生成
 
 ## 安装GDB
 在/home/ippp/ippp下创建目录GDB
-1. 安装依赖
+### 1. 安装依赖
 安装python：
 wget https://www.python.org/ftp/python/3.14.4/Python-3.14.4.tar.xz
 tar -xvf Python-3.14.4.tar.xz
@@ -106,11 +106,16 @@ cd mpfr-4.2.2
 make && make install
 安装libdebuginfod
 apt install libdebuginfod-dev
-2. 下载源码并解压
-wget http://ftp.gnu.org/gnu/gdb/gdb-17.1.tar.gz
-tar -zxvf gdb-17.1.tar.gz
-3. 修改源码
+### 2. 下载源码并解压
+
+`wget http://ftp.gnu.org/gnu/gdb/gdb-17.1.tar.gz`
+
+`tar -zxvf gdb-17.1.tar.gz`
+
+### 3. 修改源码
+
 文件gdb/remote.c
+
 ```
 /* Further sanity checks, with knowledge of the architecture.  */
 // if (buf_len > 2 * rsa->sizeof_g_packet)
@@ -146,15 +151,22 @@ target remote :1234
 b do_init_module
 
 ## Buildroot生成根文件系统
-安装依赖
-apt install -y libcrypt-dev
-在/home/ippp/ippp下创建目录buildroot
-去buildroot.org下载安装包。
-tar -zxvf buildroot-xxx
-cd buildroot-xxx
-make qemu_x86_64_defconfig
-make menuconfig
 
+### 安装依赖
+`apt install -y libcrypt-dev`
+
+### 下载并解压
+在/home/ippp/ippp下创建目录buildroot，去buildroot.org下载安装包。
+
+`tar -zxvf buildroot-xxx`
+`cd buildroot-xxx`
+
+### 配置
+
+`make qemu_x86_64_defconfig`
+`make menuconfig`
+
+```
 System configuration  --->
     (ippp) Root password
 
@@ -183,11 +195,10 @@ Filesystem images  --->
          ext2/3/4 variant  --->
             (X) ext4
     (128M) exact size
+```
 
-tmux基本不能用，所以不要选。可用screen替代。
-
-make
-buildroot的生成时间较长，需要从网上下载一些东西，应该使用科学上网。
+### 编译
+`make`
 编译完成后的目标文件存放在 output/images/目录下。
 
 ## 安装qemu
