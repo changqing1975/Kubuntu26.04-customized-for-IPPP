@@ -24,55 +24,72 @@ apt install bridge-utils uml-utilities
 apt install wireshark
 ```
 将[ippp.lua](https://github.com/changqing1975/Wireshark-extension-for-IPPP/blob/main/ippp.lua)拷贝至plugins目录(help >> about wireshark >> folders >> global lua plugins  xxx/4.6/)。
+
 ## 配置网络
+
 将虚拟机设置>>网络>>连接方式 设置为桥接网卡
 为方便使用，用手动方式配置固定IP地址，将文件[01-network-manager-all.yaml]()拷贝至/etc/netplan。
 
 ## 配置免密登录
 客户端（windows）中执行
-ssh-keygen -t rsa
+
+`ssh-keygen -t rsa`
+
 会在C:\Users\Administrator\.ssh生成id_rsa.pub
 
 虚拟机中执行
-ssh-keygen -t rsa
-会在/home/ippp/.ssh中生成密钥对文件
-在该目录中创建文件authorized_keys
-将客户端id_rsa.pub文件中内容拷贝至虚拟机authorized_keys文件。
-## 创建目录
-/home/ippp下创建ippp，ippp下创建ippp_stack_linux、kernel
-设置环境变量
-在文件/etc/profile中最后一行添加
-export PATH="$PATH:/home/ippp/ippp/ippp_stack_linux/tool/ippp"
 
-若要让其立即生效，可执行：
-source /etc/profile
+`ssh-keygen -t rsa`
+
+会在/home/ippp/.ssh中生成密钥对文件。在该目录中创建文件authorized_keys，将客户端id_rsa.pub文件中内容拷贝至虚拟机authorized_keys文件。
+
+## 创建目录
+
+目录/home/ippp下创建目录ippp，目录ippp下创建目录ippp_stack_linux、kernel。
+
+## 设置环境变量
+
+在文件/etc/profile中最后一行添加
+
+`export PATH="$PATH:/home/ippp/ippp/ippp_stack_linux/tool/ippp"`
 
 若要让其永久生效，在文件/root/.bashrc中最后一行添加
-source /etc/profile
+
+`source /etc/profile`
 
 ## Linux内核源码浏览
-1. 下载相应版本的Linux内核源码，并解压至指定目录。
-https://github.com/torvalds/linux/tags处下载相应版本，传至指定目录
-tar -Jxf linux-6.18.23.tar.xz
-2. 安装global
+
+#### 1. 下载源码并解压
+
+https://github.com/torvalds/linux/tags处下载Linux6.18.23，传至指定目录并解压
+
+`tar -Jxf linux-6.18.23.tar.xz`
+
+#### 2. 安装global
+
 先在虚拟机中安装global
-sudo apt install global
+
+`sudo apt install global`
+
 再在vscode中登录状态下安装GNU Global插件。
-验证是否生效
-　　在vscode中使用快捷键Ctrl + Shift + P，执行Show GNU Global Version，在vscode右下角显示global版本号，表示global配置生效。
-3. 指定相关路径
+
+验证是否生效：在vscode中使用快捷键Ctrl + Shift + P，执行Show GNU Global Version，在vscode右下角显示global版本号，表示global配置生效。
+
+#### 3. 指定相关路径
+
 在vscode的settings.json（file>preferences>settings）里添加
+
+```
 "gnuGlobal.globalExecutable": "/usr/bin/global",
 "gnuGlobal.gtagsExecutable": "/usr/bin/gtags",
 "gnuGlobal.objDirPrefix": "/mnt/global"
-　　注意："gnuGlobal.objDirPrefix"用于指明生成的符号表存放在哪个文件夹，其路径必须要手动创建好并设置好读写属性，否则会导致后续 Rebuild 的失败。
-4. 生成符号表
+```
+
+注意："gnuGlobal.objDirPrefix"用于指明生成的符号表存放在哪个文件夹，其路径必须要手动创建好并设置好读写属性，否则会导致后续 Rebuild 的失败。
+
+#### 4. 生成符号表
+
 在vscode使用快捷键Ctrl + Shift + P，执行 Rebuild Gtags Database，等待数分钟，在 vscode 右下角显示 Build tag files successfully，说明符号表解析完成了。符号表生成成功会在"gnuGlobal.objDirPrefix"的路径里生成三个文件：GRTAGS、GTAGS、GPATH。
-或使用手动模式。
-在某目录下sudo gtags -v
-echo "/home/ippp/ippp/ippp_stack_linux" > dirs_to_index.txt
-echo "/home/ippp/ippp/kernel" >> dirs_to_index.txt
-gtags --recursive -f /home/ippp/ippp/dirs_to_index.txt
 
 ## 至此生成了一个支持IP++开发与调试的linux系统，可直接下载[镜像](https://share.weiyun.com/SUACzzRC)使用。
 
