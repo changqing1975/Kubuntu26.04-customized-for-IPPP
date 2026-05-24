@@ -2,7 +2,7 @@
 
 [English](README_en.md) | [简体中文](README.md)
 
-IP++协议栈针对linux内核6.18.23开发。为确保协议栈的正常使用，应采用此处的方法定制内核。可根据具体需求选择源码安装或二进制包安装。
+为方便大家使用IP++以及做相关的开发调试，这里专门基于Kubuntu26.04定制了一个操作系统。您可以直接下载镜像使用，或者仿照这里列出的详细步骤自己定制。
 
 ## 安装kubuntu26.04
 在虚拟机中安装kubuntu26.04，按下面所示配置参数：
@@ -28,20 +28,21 @@ apt install wireshark
 ## 配置网络
 
 将虚拟机设置>>网络>>连接方式 设置为桥接网卡
-为方便使用，用手动方式配置固定IP地址，将文件[01-network-manager-all.yaml]()拷贝至/etc/netplan。
+
+为方便使用，用手动方式将IP地址配置为固定模式，将文件[01-network-manager-all.yaml]()拷贝至/etc/netplan。
 
 ## 配置免密登录
 客户端（windows）中执行
 
 `ssh-keygen -t rsa`
 
-会在C:\Users\Administrator\.ssh生成id_rsa.pub
+会在目录C:\Users\Administrator\.ssh中生成id_rsa.pub
 
 虚拟机中执行
 
 `ssh-keygen -t rsa`
 
-会在/home/ippp/.ssh中生成密钥对文件。在该目录中创建文件authorized_keys，将客户端id_rsa.pub文件中内容拷贝至虚拟机authorized_keys文件。
+会在/home/ippp/.ssh中生成密钥对文件。在该目录中创建文件authorized_keys，将客户端id_rsa.pub文件中内容拷贝至文件authorized_keys。
 
 ## 创建目录
 
@@ -61,7 +62,7 @@ apt install wireshark
 
 #### 1. 下载源码并解压
 
-https://github.com/torvalds/linux/tags处下载Linux6.18.23，传至指定目录并解压
+`https://github.com/torvalds/linux/tags`处下载Linux6.18.23，存放到指定目录并解压
 
 `tar -Jxf linux-6.18.23.tar.xz`
 
@@ -91,7 +92,7 @@ https://github.com/torvalds/linux/tags处下载Linux6.18.23，传至指定目录
 
 在vscode使用快捷键Ctrl + Shift + P，执行 Rebuild Gtags Database，等待数分钟，在 vscode 右下角显示 Build tag files successfully，说明符号表解析完成了。符号表生成成功会在"gnuGlobal.objDirPrefix"的路径里生成三个文件：GRTAGS、GTAGS、GPATH。
 
-## 至此生成了一个支持IP++开发与调试的linux系统，可直接下载[镜像](https://share.weiyun.com/SUACzzRC)使用。
+## 至此生成了一个可浏览内核源码的kubuntu系统，可直接下载[镜像](https://share.weiyun.com/SUACzzRC)使用。
 
 ## 安装内核
 
@@ -100,28 +101,51 @@ https://github.com/torvalds/linux/tags处下载Linux6.18.23，传至指定目录
 ## 安装GDB
 在/home/ippp/ippp下创建目录GDB
 ### 1. 安装依赖
-安装python：
-wget https://www.python.org/ftp/python/3.14.4/Python-3.14.4.tar.xz
-tar -xvf Python-3.14.4.tar.xz
-cd Python-3.14.4
-./configure --with-python
-make && make install
-apt install python3-dev
-安装GMP：
-wget ftp://gcc.gnu.org/pub/gcc/infrastructure/gmp-6.3.0.tar.bz2
-tar -jxvf gmp-6.3.0.tar.bz2
-cd gmp-6.3.0
-./configure
-make && make install
-apt install libgmp-dev
-安装MPFR：
-wget ftp://gcc.gnu.org/pub/gcc/infrastructure/mpfr-4.2.2.tar.bz2
-tar -jxvf mpfr-4.2.2.tar.bz2
-cd mpfr-4.2.2
-./configure
-make && make install
-安装libdebuginfod
-apt install libdebuginfod-dev
+
+#### 安装python：
+
+`wget https://www.python.org/ftp/python/3.14.4/Python-3.14.4.tar.xz`
+
+`tar -xvf Python-3.14.4.tar.xz`
+
+`cd Python-3.14.4`
+
+`./configure --with-python`
+
+`make && make install`
+
+`apt install python3-dev`
+
+#### 安装GMP：
+
+`wget ftp://gcc.gnu.org/pub/gcc/infrastructure/gmp-6.3.0.tar.bz2`
+
+`tar -jxvf gmp-6.3.0.tar.bz2`
+
+`cd gmp-6.3.0`
+
+`./configure`
+
+`make && make install`
+
+`apt install libgmp-dev`
+
+#### 安装MPFR：
+
+`wget ftp://gcc.gnu.org/pub/gcc/infrastructure/mpfr-4.2.2.tar.bz2`
+
+`tar -jxvf mpfr-4.2.2.tar.bz2`
+
+`cd mpfr-4.2.2`
+
+`./configure`
+
+`make && make install`
+
+#### 安装libdebuginfod
+
+`apt install libdebuginfod-dev`
+
 ### 2. 下载源码并解压
 
 `wget http://ftp.gnu.org/gnu/gdb/gdb-17.1.tar.gz`
@@ -150,21 +174,32 @@ if (buf_len > 2 * rsa->sizeof_g_packet) {
             rsa->regs[i].in_g_packet = 1;
 }}
 ```
-4.
-./configure --with-python --with-debuginfod
-make && make install
-cp gdb/gdb /usr/bin/
+### 4. 编译
+
+`./configure --with-python --with-debuginfod`
+
+`make && make install`
+
+`cp gdb/gdb /usr/bin/`
 
 在内核根目录下执行
-make scripts_gdb
-配置gdbinit启动脚本
+
+`make scripts_gdb`
+
+### 5. 配置gdbinit启动脚本
+
 在/root/.config/gdb/gdbinit文件中设置
-add-auto-load-safe-path /home/ippp/ippp/kernel/linux-6.18.23/.gdbinit
-在该.gdbinit文件中
+
+`add-auto-load-safe-path /home/ippp/ippp/kernel/linux-6.18.23/.gdbinit`
+
+在该.gdbinit文件中添加
+
+```
 add-auto-load-safe-path ./
 source ./vmlinux-gdb.py
 target remote :1234
 b do_init_module
+```
 
 ## Buildroot生成根文件系统
 
@@ -263,4 +298,4 @@ qemu-system-x86_64 \
 
 加入到etc/init.d/rcS的最后一行。
 
-## 至此生成了一个支持IP++开发与调试的linux系统，可直接下载[镜像](https://share.weiyun.com/XzZ7NRTK)使用。
+## 至此生成了一个支持IP++开发与调试的kubuntu系统，可直接下载[镜像](https://share.weiyun.com/XzZ7NRTK)使用。
