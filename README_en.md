@@ -2,7 +2,7 @@
 
 [English](README_en.md) | [简体中文](README.md)
 
-To facilitate the usage, development and debugging of IP++, a customized operating system based on Kubuntu 26.04 is provided. You can directly download the system image or follow the detailed steps below to customize the system manually.
+To facilitate the usage, development and debugging of IP++, a customized operating system based on Kubuntu 26.04 is provided. You can directly download the system image or follow the steps below to customize the system manually.
 
 ## Install Kubuntu 26.04
 Install Kubuntu 26.04 in a virtual machine with the following configuration parameters:
@@ -27,7 +27,7 @@ Copy [ippp.lua](https://github.com/changqing1975/Wireshark-extension-for-IPPP/bl
 
 ## Network Configuration
 
-Set the virtual machine's network connection mode to Bridged Networking.
+Set the virtual machine's network connection mode to "Bridged Networking".
 
 For convenience, configure a static IP address manually by copying the file [01-network-manager-all.yaml](https://github.com/changqing1975/IPPP-protocol-stack-for-linux/blob/main/samples/lesson1/01-network-manager-all.yaml) to /etc/netplan.
 
@@ -47,7 +47,7 @@ This generates the key pair in /home/ippp/.ssh. Create a file named authorized_k
 
 ## Create Directories
 
-Create directories ippp under /home/ippp, Create directories ippp_stack_linux, and kernel under ippp.
+Create directory ippp under /home/ippp, Create directories ippp_stack_linux, and kernel under ippp.
 
 ## Set Environment Variables
 
