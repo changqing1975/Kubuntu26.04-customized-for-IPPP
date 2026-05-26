@@ -2,7 +2,7 @@
 
 [English](README_en.md) | [简体中文](README.md)
 
-为方便大家使用IP++以及做相关的开发调试，这里专门基于Kubuntu26.04定制了一个操作系统。您可以直接下载镜像使用，或者仿照这里列出的详细步骤自己定制。
+为方便大家使用IP++以及做相关的开发调试，这里专门基于Kubuntu26.04定制了一版操作系统。您可以直接下载镜像使用，或者仿照这里列出的步骤自己定制。
 
 ## 安装kubuntu26.04
 在虚拟机中安装kubuntu26.04，按下面所示配置参数：
@@ -11,7 +11,7 @@
 密码     : ippp
 内存大小 : 8192M
 虚拟硬盘 : 128G
-语言     ： 英文
+语言     : 英文
 ```
 ## 安装基础软件
 ```
@@ -46,7 +46,7 @@ apt install wireshark
 
 ## 创建目录
 
-目录/home/ippp下创建目录ippp，目录ippp下创建目录ippp_stack_linux、kernel。
+目录/home/ippp下创建目录ippp，ippp下创建ippp_stack_linux、kernel。
 
 ## 设置环境变量
 
@@ -70,7 +70,7 @@ apt install wireshark
 
 先在虚拟机中安装global
 
-`sudo apt install global`
+`apt install global`
 
 再在vscode中登录状态下安装GNU Global插件。
 
@@ -86,7 +86,7 @@ apt install wireshark
 "gnuGlobal.objDirPrefix": "/mnt/global"
 ```
 
-注意："gnuGlobal.objDirPrefix"用于指明生成的符号表存放在哪个文件夹，其路径必须要手动创建好并设置好读写属性，否则会导致后续 Rebuild 的失败。
+注意："gnuGlobal.objDirPrefix"用于指明生成的符号表存放在哪个文件夹，其路径需手动创建好并设置好读写属性，否则会导致后续 Rebuild 的失败。
 
 #### 4. 生成符号表
 
