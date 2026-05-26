@@ -5,7 +5,7 @@
 To facilitate the usage, development and debugging of IP++, a customized operating system based on Kubuntu 26.04 is provided. You can directly download the system image or follow the detailed steps below to customize the system manually.
 
 ## Install Kubuntu 26.04
-Install Kubuntu 26.04 on a virtual machine with the following configuration parameters:
+Install Kubuntu 26.04 in a virtual machine with the following configuration parameters:
 ```
 Username   : ippp
 Password   : ippp
@@ -13,7 +13,7 @@ Memory     : 8192M
 Virtual Disk : 128G
 Language   : English
 ```
-## Install Basic Dependencies
+## Install Basic Software
 ```
 sudo passwd root            #ippp
 apt update && apt upgrade
@@ -23,62 +23,63 @@ apt install build-essential #gcc15.2
 apt install bridge-utils uml-utilities
 apt install wireshark
 ```
-Copy [ippp.lua](https://github.com/changqing1975/Wireshark-extension-for-IPPP/blob/main/ippp.lua) to the global Lua plugins directory.Path access: Help >> About Wireshark >> Folders >> Global Lua Plugins (xxx/4.6/)
+Copy [ippp.lua](https://github.com/changqing1975/Wireshark-extension-for-IPPP/blob/main/ippp.lua) to the global Lua plugins directory(Help >> About Wireshark >> Folders >> Global Lua Plugins xxx/4.6/).
 
 ## Network Configuration
 
-将虚拟机设置>>网络>>连接方式 设置为桥接网卡
+Set the virtual machine's network connection mode to Bridged Networking.
 
-为方便使用，用手动方式将IP地址配置为固定模式，将文件[01-network-manager-all.yaml]()拷贝至/etc/netplan。
+For convenience, configure a static IP address manually by copying the file [01-network-manager-all.yaml](https://github.com/changqing1975/IPPP-protocol-stack-for-linux/blob/main/samples/lesson1/01-network-manager-all.yaml) to /etc/netplan.
 
-## Passwordless SSH Login
-Windows Client
+## Configure Passwordless SSH Login
 
-`ssh-keygen -t rsa`
-
-Public key id_rsa.pub will be generated under C:\Users\Administrator\.ssh.
-
-虚拟机中执行
+On the client (Windows), execute:
 
 `ssh-keygen -t rsa`
 
-会在/home/ippp/.ssh中生成密钥对文件。在该目录中创建文件authorized_keys，将客户端id_rsa.pub文件中内容拷贝至文件authorized_keys。
+Public key id_rsa.pub will be generated under C:\Users\Administrator\\.ssh.
 
-## 创建目录
+On the virtual machine, execute:
 
-目录/home/ippp下创建目录ippp，ippp下创建ippp_stack_linux、kernel。
+`ssh-keygen -t rsa`
 
-## 设置环境变量
+This generates the key pair in /home/ippp/.ssh. Create a file named authorized_keys in that directory and paste the contents of id_rsa.pub from the client into it.
 
-在文件/etc/profile中最后一行添加
+## Create Directories
+
+Create directories ippp under /home/ippp, Create directories ippp_stack_linux, and kernel under ippp.
+
+## Set Environment Variables
+
+Add the following line to the end of /etc/profile:
 
 `export PATH="$PATH:/home/ippp/ippp/ippp_stack_linux/tool/ippp"`
 
-若要让其永久生效，在文件/root/.bashrc中最后一行添加
+To make it permanent, add the following line to the end of /root/.bashrc:
 
 `source /etc/profile`
 
-## Linux内核源码浏览
+## Linux Kernel Source Code Browsing
 
-#### 1. 下载源码并解压
+#### 1. Download and Extract Source Code
 
-`https://github.com/torvalds/linux/tags`处下载Linux6.18.23，存放到指定目录并解压
+Download Linux 6.18.23 from `https://github.com/torvalds/linux/tags`, store it in the specified directory, and extract:
 
 `tar -Jxf linux-6.18.23.tar.xz`
 
-#### 2. 安装global
+#### 2. Install global
 
-先在虚拟机中安装global
+First, install global in the virtual machine:
 
 `apt install global`
 
-再在vscode中登录状态下安装GNU Global插件。
+Then, install the GNU Global plugin in VScode while logged in.
 
-验证是否生效：在vscode中使用快捷键Ctrl + Shift + P，执行Show GNU Global Version，在vscode右下角显示global版本号，表示global配置生效。
+Verify if it works: In VScode, press Ctrl + Shift + P, execute "Show GNU Global Version", and display the global version number in the bottom-right corner of VScode, indicating the global configuration is active.
 
-#### 3. 指定相关路径
+#### 3. Specify Related Paths
 
-在vscode的settings.json（file>preferences>settings）里添加
+Add the following to VScode's settings.json (File >> Preferences >> Settings):
 
 ```
 "gnuGlobal.globalExecutable": "/usr/bin/global",
@@ -86,23 +87,25 @@ Public key id_rsa.pub will be generated under C:\Users\Administrator\.ssh.
 "gnuGlobal.objDirPrefix": "/mnt/global"
 ```
 
-注意："gnuGlobal.objDirPrefix"用于指明生成的符号表存放在哪个文件夹，其路径需手动创建好并设置好读写属性，否则会导致后续 Rebuild 的失败。
+Note: "gnuGlobal.objDirPrefix" specifies the folder where the generated symbol table is stored. The path must be created manually with read/write permissions; otherwise, subsequent rebuilds will fail.
 
-#### 4. 生成符号表
+#### 4. Generate Symbol Table
 
-在vscode使用快捷键Ctrl + Shift + P，执行 Rebuild Gtags Database，等待数分钟，在 vscode 右下角显示 Build tag files successfully，说明符号表解析完成了。符号表生成成功会在"gnuGlobal.objDirPrefix"的路径里生成三个文件：GRTAGS、GTAGS、GPATH。
+In VS Code, press Ctrl + Shift + P, execute "Rebuild Gtags Database", and wait several minutes. When "Build tag files successfully" appears in the bottom-right corner of VS Code, the symbol table parsing is complete. The three files GRTAGS, GTAGS, and GPATH will be generated in the path specified by gnuGlobal.objDirPrefix.
 
-## 至此生成了一个可浏览内核源码的kubuntu系统，可直接下载[镜像](https://share.weiyun.com/SUACzzRC)使用。
+## A fully functional kernel source code browsing system is ready. You can download the pre-built [image](https://share.weiyun.com/SUACzzRC).
 
-## 安装内核
+## Install the Kernel
 
-安装定制版内核的方法，可参阅项目[Linux-kernel-for-IPPP-protocol-stack](https://github.com/changqing1975/Linux-kernel-for-IPPP-protocol-stack)。
+For methods to install the customized kernel, refer to the project [Linux-kernel-for-IPPP-protocol-stack](https://github.com/changqing1975/Linux-kernel-for-IPPP-protocol-stack).
 
-## 安装GDB
-在/home/ippp/ippp下创建目录GDB
-### 1. 安装依赖
+## Install GDB
 
-#### 安装python：
+Create a GDB directory under /home/ippp/ippp.
+
+### 1. Install Dependencies
+
+#### Install python：
 
 `wget https://www.python.org/ftp/python/3.14.4/Python-3.14.4.tar.xz`
 
@@ -116,7 +119,7 @@ Public key id_rsa.pub will be generated under C:\Users\Administrator\.ssh.
 
 `apt install python3-dev`
 
-#### 安装GMP：
+#### Install GMP：
 
 `wget ftp://gcc.gnu.org/pub/gcc/infrastructure/gmp-6.3.0.tar.bz2`
 
@@ -130,7 +133,7 @@ Public key id_rsa.pub will be generated under C:\Users\Administrator\.ssh.
 
 `apt install libgmp-dev`
 
-#### 安装MPFR：
+#### Install MPFR：
 
 `wget ftp://gcc.gnu.org/pub/gcc/infrastructure/mpfr-4.2.2.tar.bz2`
 
@@ -142,19 +145,19 @@ Public key id_rsa.pub will be generated under C:\Users\Administrator\.ssh.
 
 `make && make install`
 
-#### 安装libdebuginfod
+#### Install libdebuginfod
 
 `apt install libdebuginfod-dev`
 
-### 2. 下载源码并解压
+### 2. Download Source Code and Extract
 
 `wget http://ftp.gnu.org/gnu/gdb/gdb-17.1.tar.gz`
 
 `tar -zxvf gdb-17.1.tar.gz`
 
-### 3. 修改源码
+### 3. Modify Source Code
 
-文件gdb/remote.c
+File gdb/remote.c
 
 ```
 /* Further sanity checks, with knowledge of the architecture.  */
@@ -174,7 +177,7 @@ if (buf_len > 2 * rsa->sizeof_g_packet) {
             rsa->regs[i].in_g_packet = 1;
 }}
 ```
-### 4. 编译
+### 4. Compile
 
 `./configure --with-python --with-debuginfod`
 
@@ -182,17 +185,17 @@ if (buf_len > 2 * rsa->sizeof_g_packet) {
 
 `cp gdb/gdb /usr/bin/`
 
-在内核根目录下执行
+Execute in the kernel root directory:
 
 `make scripts_gdb`
 
-### 5. 配置gdbinit启动脚本
+### 5. Configure gdbinit Startup Script
 
-在/root/.config/gdb/gdbinit文件中设置
+In file /root/.config/gdb/gdbinit, set:
 
 `add-auto-load-safe-path /home/ippp/ippp/kernel/linux-6.18.23/.gdbinit`
 
-在该.gdbinit文件中添加
+Add the following to file .gdbinit:
 
 ```
 add-auto-load-safe-path ./
@@ -201,21 +204,21 @@ target remote :1234
 b do_init_module
 ```
 
-## Buildroot生成根文件系统
+## Buildroot for Root Filesystem Generation
 
-### 安装依赖
+### Install Dependencies
 
 `apt install -y libcrypt-dev`
 
-### 下载并解压
+### Download and Extract
 
-在/home/ippp/ippp下创建目录buildroot，去buildroot.org下载安装包。
+Create a buildroot directory under /home/ippp/ippp, and download the package from buildroot.org.
 
 `tar -zxvf buildroot-xxx`
 
 `cd buildroot-xxx`
 
-### 配置
+### Configure
 
 `make qemu_x86_64_defconfig`
 
@@ -252,19 +255,20 @@ Filesystem images  --->
     (128M) exact size
 ```
 
-### 编译
+### Compile
 
 `make`
 
-编译完成后的目标文件存放在 output/images/目录下。
+The target files after compilation are stored in the output/images/ directory.
 
-## 安装qemu
+## Install qemu
 
-使用以下命令安装：
+Install using the following command:
 
 `apt install qemu-system-x86 libc6-dev-i386 -y`
 
-使用类似下面的命令运行：
+Run using a command similar to:
+
 ```
 qemu-system-x86_64 \
   -kernel ./linux-6.18.23/arch/x86_64/boot/bzImage \
@@ -277,25 +281,26 @@ qemu-system-x86_64 \
   -net nic -net tap,ifname=tap0,script=no,downscript=no
 ```
 
-### 配置共享文件
-1. 准备目录
+### Configure Shared Files
+
+1. Prepare Directory
 
 `mkdir ../shared`
 
-2. 启动QEMU时的参数
+2. QEMU Startup Parameters
 
 `qemu-system-x86_64 ... -virtfs local,path=../shared,mount_tag=host0,security_model=passthrough,id=host0`
 
-3. 在虚拟机内部，挂载共享文件夹：
+3. In the Virtual Machine, Mount Shared Folder:
 
 `mkdir -p /ippp/shared`
 
 `sudo mount -t 9p -o trans=virtio,version=9p2000.L host0 /ippp/shared`
 
-要想每次重启QEMU虚拟机时能自动重新挂载，则将
+To automatically remount each time the QEMU virtual machine restarts, add:
 
 `mount -t 9p -o trans=virtio,version=9p2000.L host0 /ippp/shared`
 
-加入到etc/init.d/rcS的最后一行。
+to the end of etc/init.d/rcS.
 
-## 至此生成了一个支持IP++开发与调试的kubuntu系统，可直接下载[镜像](https://share.weiyun.com/XzZ7NRTK)使用。
+## You can now directly download the [image](https://share.weiyun.com/XzZ7NRTK) of the Kubuntu system supporting IP++ development and debugging.

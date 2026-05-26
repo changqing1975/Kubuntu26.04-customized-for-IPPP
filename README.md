@@ -29,14 +29,14 @@ apt install wireshark
 
 将虚拟机设置>>网络>>连接方式 设置为桥接网卡
 
-为方便使用，用手动方式将IP地址配置为固定模式，将文件[01-network-manager-all.yaml]()拷贝至/etc/netplan。
+为方便使用，用手动方式将IP地址配置为固定模式，将文件[01-network-manager-all.yaml](https://github.com/changqing1975/IPPP-protocol-stack-for-linux/blob/main/samples/lesson1/01-network-manager-all.yaml)拷贝至/etc/netplan。
 
 ## 配置免密登录
 客户端（windows）中执行
 
 `ssh-keygen -t rsa`
 
-会在目录C:\Users\Administrator\.ssh中生成id_rsa.pub
+会在目录C:\Users\Administrator\\.ssh中生成id_rsa.pub
 
 虚拟机中执行
 
